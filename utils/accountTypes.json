@@ -1,0 +1,18 @@
+[
+  {
+    "value": "CACC",
+    "label": "Conta corrente"
+  },
+  {
+    "value": "SVGS",
+    "label": "Conta poupança"
+  },
+  {
+    "value": "SLRY",
+    "label": "Conta salário"
+  },
+  {
+    "value": "TRAN",
+    "label": "Conta de pagamento"
+  }
+]

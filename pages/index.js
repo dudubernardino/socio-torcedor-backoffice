@@ -1,118 +1,161 @@
-import Image from 'next/image'
-import { Inter } from 'next/font/google'
+import React, { useState } from 'react'
+import { useRouter } from 'next/router'
+import Link from 'next/link'
+import Head from 'next/head'
+import { useForm } from 'react-hook-form'
+import { getCookie, setCookie } from 'cookies-next'
+import { decodeJwt } from 'jose'
 
-const inter = Inter({ subsets: ['latin'] })
+import { eres } from 'utils/eres'
+import { fetcher } from 'utils/fetcher'
 
-export default function Home() {
+import { HeaderOutside } from 'components/HeaderOutside'
+
+function Login() {
+  const [error, setError] = useState('')
+  const router = useRouter()
+
+  const {
+    register,
+    handleSubmit,
+    formState: { isSubmitting },
+  } = useForm({
+    defaultValues: {
+      email: '',
+      secret: '',
+    },
+  })
+
+  const handleLogin = async (body) => {
+    setError('')
+    setCookie('email', body?.email)
+
+    const [error, data] = await eres(
+      fetcher({ path: '/auth', body, method: 'POST' })
+    )
+
+    if (!data) {
+      return setError('Usuário ou senha inválidos.')
+    }
+
+    if (error || !data || !data?.accessToken) {
+      setError(
+        error?.message ||
+          'Algo deu errado ao realizar a operação. Nossa equipe já foi acionada sobre o problema.'
+      )
+      return
+    }
+
+    setCookie('jwt', data?.accessToken, {
+      path: '/',
+      sameSite: true,
+    })
+    setCookie('refreshToken', data?.refreshToken, {
+      path: '/',
+      sameSite: true,
+    })
+    setCookie('data', decodeJwt(data?.accessToken)?.payload, {
+      path: '/',
+      sameSite: true,
+    })
+
+    router.push('/dash')
+  }
+
   return (
-    <main
-      className={`flex min-h-screen flex-col items-center justify-between p-24 ${inter.className}`}
-    >
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">pages/index.js</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+    <div className="bg-black bg-[url('./../public/iniciador_lines.png')] bg-right-bottom bg-no-repeat bg-contain h-full">
+      <Head>
+        <title>Login - Backoffice Iniciador</title>
+      </Head>
+      <HeaderOutside />
+      <div className="container mx-auto px-4 h-full">
+        <div className="flex content-center items-center justify-center h-full">
+          <div className="w-full lg:w-4/12 px-4">
+            <div className="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-gray-200 border-0">
+              <div className="rounded-t mb-0 px-6 py-6">
+                <div className="text-center mb-3">
+                  <h6 className="text-gray-500 text-md font-bold">
+                    Acessar plataforma
+                  </h6>
+                </div>
+                <hr className="mt-6 border-b-1 border-gray-300" />
+              </div>
+              <div className="flex-auto px-6 py-10 pt-0">
+                <form
+                  onSubmit={handleSubmit(handleLogin)}
+                  disabled={isSubmitting}
+                >
+                  <div className="relative w-full mb-3">
+                    <label className="block uppercase text-gray-600 text-xs font-bold mb-2">
+                      E-mail
+                    </label>
+                    <input
+                      type="email"
+                      className="border-0 px-3 py-3 placeholder-gray-300 text-gray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                      placeholder="E-mail"
+                      {...register('email', { required: true })}
+                      required
+                    />
+                  </div>
+                  <div className="relative w-full mb-3">
+                    <label className="block uppercase text-gray-600 text-xs font-bold mb-2">
+                      Senha
+                    </label>
+                    <input
+                      type="password"
+                      className="border-0 px-3 py-3 placeholder-gray-300 text-gray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                      placeholder="Senha"
+                      {...register('secret', { required: true })}
+                      required
+                    />
+                  </div>
+
+                  {error && (
+                    <p className="text-center text-xs mt-3 text-red-700">
+                      {error}
+                    </p>
+                  )}
+                  <div className="text-center mt-6">
+                    <button
+                      className="bg-gray-800 text-white active:bg-gray-600 text-sm font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 w-full ease-linear transition-all duration-150"
+                      type="submit"
+                      disabled={isSubmitting}
+                    >
+                      {isSubmitting ? 'Carregando...' : 'Entrar'}
+                    </button>
+                    <div className="mt-2">
+                      <Link className="underline" href="/forgot-secret">
+                        Esqueci minha senha
+                      </Link>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700/10 after:dark:from-sky-900 after:dark:via-[#0141ff]/40 before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className="mb-32 grid text-center lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Discover and deploy boilerplate example Next.js&nbsp;projects.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+    </div>
   )
+}
+
+export default Login
+
+export const getServerSideProps = async ({ req, res }) => {
+  const jwt = getCookie('jwt', { req, res })
+
+  if (jwt) {
+    return {
+      redirect: {
+        destination: '/dash/payments',
+        permanent: false,
+      },
+    }
+  }
+
+  return {
+    props: {
+      outsideLayout: true,
+    },
+  }
 }
