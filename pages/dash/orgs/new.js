@@ -31,7 +31,7 @@ function OrgCreate() {
   return (
     <>
       <Head>
-        <title>Adicionar nova organização - Backoffice Iniciador</title>
+        <title>Adicionar nova organização - Backoffice Sócio API</title>
       </Head>
       <div className="relative md:ml-64 bg-gray-100 h-full">
         <OrgForm onSubmit={onSubmit} setDisabled={() => router.back()} />

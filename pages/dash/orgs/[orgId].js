@@ -40,7 +40,7 @@ function Org() {
   return (
     <>
       <Head>
-        <title>{org?.name || ''} Organização - Backoffice Iniciador</title>
+        <title>{org?.name || ''} Organização - Backoffice Sócio API</title>
       </Head>
       <div className="relative md:ml-64 bg-gray-100 h-full">
         {isLoading && (

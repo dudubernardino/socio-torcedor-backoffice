@@ -22,7 +22,7 @@ function Login() {
   } = useForm({
     defaultValues: {
       email: '',
-      secret: '',
+      password: '',
     },
   })
 
@@ -63,9 +63,9 @@ function Login() {
   }
 
   return (
-    <div className="bg-black bg-[url('./../public/iniciador_lines.png')] bg-right-bottom bg-no-repeat bg-contain h-full">
+    <div className="bg-black  bg-right-bottom bg-no-repeat bg-contain h-full">
       <Head>
-        <title>Login - Backoffice Iniciador</title>
+        <title>Login - Backoffice Sócio API</title>
       </Head>
       <HeaderOutside />
       <div className="container mx-auto px-4 h-full">
@@ -105,7 +105,7 @@ function Login() {
                       type="password"
                       className="border-0 px-3 py-3 placeholder-gray-300 text-gray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                       placeholder="Senha"
-                      {...register('secret', { required: true })}
+                      {...register('password', { required: true })}
                       required
                     />
                   </div>
@@ -147,7 +147,7 @@ export const getServerSideProps = async ({ req, res }) => {
   if (jwt) {
     return {
       redirect: {
-        destination: '/dash/payments',
+        destination: '/dash/teams',
         permanent: false,
       },
     }

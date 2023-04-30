@@ -52,7 +52,7 @@ function Reports({ jwt }) {
   return (
     <>
       <Head>
-        <title>2FA - Backoffice Iniciador</title>
+        <title>2FA - Backoffice Sócio API</title>
       </Head>
       <div className="relative md:ml-64 bg-gray-100 h-full">
         <div className="px-4 md:px-10 mx-auto w-full bg-gray-100 py-6">

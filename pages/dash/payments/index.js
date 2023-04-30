@@ -49,11 +49,10 @@ function Payments() {
     )
   }
 
-
   return (
     <>
       <Head>
-        <title>Pagamentos - Backoffice Iniciador</title>
+        <title>Pagamentos - Backoffice Sócio API</title>
       </Head>
       <div className="relative md:ml-64 bg-gray-100 h-full">
         <div className="px-4 md:px-10 mx-auto w-full">

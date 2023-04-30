@@ -39,7 +39,7 @@ function Customer() {
   return (
     <>
       <Head>
-        <title>{customer?.name || 'Cliente'} - Backoffice Iniciador</title>
+        <title>{customer?.name || 'Cliente'} - Backoffice Sócio API</title>
       </Head>
       <div className="relative md:ml-64 bg-gray-100 h-full">
         {isLoading && (

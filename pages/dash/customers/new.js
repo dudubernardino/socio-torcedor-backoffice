@@ -31,7 +31,7 @@ function CustomerCreate() {
   return (
     <>
       <Head>
-        <title>Adicionar novo cliente - Backoffice Iniciador</title>
+        <title>Adicionar novo cliente - Backoffice Sócio API</title>
       </Head>
       <div className="relative md:ml-64 bg-gray-100 h-full">
         <CustomerForm

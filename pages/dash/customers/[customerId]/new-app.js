@@ -45,7 +45,7 @@ function ApplicationNew({ banks }) {
   return (
     <>
       <Head>
-        <title>Nova aplicação - Backoffice Iniciador</title>
+        <title>Nova aplicação - Backoffice Sócio API</title>
       </Head>
       <div className="relative md:ml-64 bg-gray-100 h-full">
         {result ? (

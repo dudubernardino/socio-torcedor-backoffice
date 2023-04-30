@@ -33,7 +33,7 @@ function UserCreate({ currentUser }) {
   return (
     <>
       <Head>
-        <title>Adicionar novo usuário - Backoffice Iniciador</title>
+        <title>Adicionar novo usuário - Backoffice Sócio API</title>
       </Head>
       <div className="relative md:ml-64 bg-gray-100 h-full">
         <UserForm

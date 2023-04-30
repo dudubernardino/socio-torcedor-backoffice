@@ -45,23 +45,7 @@ export const Sidebar = () => {
   }, [data])
 
   // Access control
-  const hasPayments = [
-    'INIC_ADMIN',
-    'ORG_ADMIN',
-    'ORG_OPERATOR',
-    'CUSTOMER_ADMIN',
-    'CUSTOMER_OPERATOR',
-    'SUPER_ADMIN', //remove when update backend
-  ].includes(payload?.role)
-
-  const hasWebhooks = [
-    'INIC_ADMIN',
-    'ORG_ADMIN',
-    'ORG_OPERATOR',
-    'CUSTOMER_ADMIN',
-    'CUSTOMER_OPERATOR',
-    'SUPER_ADMIN', //remove when update backend
-  ].includes(payload?.role)
+  const hasTeams = ['SUPER_ADMIN'].includes(payload?.role)
 
   const hasCustomers = [
     'INIC_ADMIN',
@@ -130,9 +114,7 @@ export const Sidebar = () => {
                 alt="Logo"
               />
             )}
-            <span className="truncate block">
-              Backoffice {payload?.provider?.name || 'Iniciador'}
-            </span>
+            <span className="truncate block">Backoffice Sócio API</span>
           </Link>
           <p className="py-2 text-sm font-medium">
             Boas vindas, {(payload?.name || '').split(' ')[0]}
@@ -160,7 +142,7 @@ export const Sidebar = () => {
                     href="/"
                     className="md:block text-left md:pb-2 text-gray-600 mr-0 inline-block whitespace-nowrap text-sm uppercase font-bold p-4 px-0"
                   >
-                    Backoffice Iniciador
+                    Backoffice Sócio API
                   </Link>
                 </div>
                 <div className="w-6/12 flex justify-end">
@@ -181,48 +163,26 @@ export const Sidebar = () => {
             {/* Navigation */}
 
             <ul className="md:flex-col md:min-w-full flex flex-col list-none">
-              {/* <li className="items-center">
-              <Link href="/dash">
-                <a
-                  className={
-                    'text-xs uppercase py-3 font-bold block ' +
-                    (router.pathname === '/dash'
-                      ? 'text-blue-500 hover:text-blue-600'
-                      : 'text-gray-700 hover:text-gray-500')
-                  }
-                >
-                  <i
-                    className={
-                      'fas fa-tv mr-2 text-sm ' +
-                      (router.pathname === '/dash'
-                        ? 'opacity-75'
-                        : 'text-gray-300')
-                    }
-                  ></i>{' '}
-                  Backoffice
-                </a>
-              </Link>
-            </li> */}
-              {hasPayments && (
+              {hasTeams && (
                 <li className="items-center">
                   <Link
-                    href="/dash/payments"
+                    href="/dash/teams"
                     className={
                       'text-xs uppercase py-3 font-bold block ' +
-                      (router.pathname.indexOf('/dash/payments') !== -1
+                      (router.pathname.indexOf('/dash/teams') !== -1
                         ? 'text-blue-500 hover:text-blue-600'
                         : 'text-gray-700 hover:text-gray-500')
                     }
                   >
                     <i
                       className={
-                        'fas fa-table mr-2 text-sm ' +
-                        (router.pathname.indexOf('/dash/payments') !== -1
+                        'fas fa-futbol mr-2 text-sm ' +
+                        (router.pathname.indexOf('/dash/teams') !== -1
                           ? 'opacity-75'
                           : 'text-gray-300')
                       }
                     ></i>{' '}
-                    Iniciações
+                    Times
                   </Link>
                 </li>
               )}
@@ -249,7 +209,6 @@ export const Sidebar = () => {
                   </Link>
                 </li>
               )}
-
               {hasCustomerInfoOnly && (
                 <li className="items-center">
                   <Link
@@ -343,32 +302,6 @@ export const Sidebar = () => {
                   </Link>
                 </li>
               )}
-              {hasWebhooks && (
-                <li className="items-center">
-                  <Link
-                    href="/dash/webhooks"
-                    className={
-                      'text-xs uppercase py-3 font-bold block ' +
-                      (router.pathname.indexOf('/dash/webhooks') !== -1
-                        ? 'text-blue-500 hover:text-blue-600'
-                        : 'text-gray-700 hover:text-gray-500')
-                    }
-                  >
-                    <i
-                      className={
-                        'fas fa-gear mr-2 text-sm ' +
-                        (router.pathname.indexOf('/dash/webhooks') !== -1
-                          ? 'opacity-75'
-                          : 'text-gray-300')
-                      }
-                    ></i>{' '}
-                    Webhooks Logs{' '}
-                    <span className="font-medium text-xs leading-5 rounded-full text-sky-600 bg-sky-400/10 px-2 py-0.5 dark:text-sky-400">
-                      beta
-                    </span>
-                  </Link>
-                </li>
-              )}
               {hasReports && (
                 <li className="items-center">
                   <Link
@@ -424,73 +357,13 @@ export const Sidebar = () => {
             <hr className="my-4 md:min-w-full" />
             {/* Heading */}
             <h6 className="md:min-w-full text-gray-500 text-xs uppercase font-bold block pt-1 pb-4 no-underline">
-              Suporte
-            </h6>
-            {/* Navigation */}
-            <ul className="md:flex-col md:min-w-full flex flex-col list-none">
-              <li className="inline-flex">
-                <button
-                  className="text-gray-700 hover:text-gray-500 text-sm block mb-4 no-underline font-semibold"
-                  onClick={() =>
-                    createPopup('oU8lhsAX', {
-                      size: 90,
-                      medium: 'chamado',
-                      hidden: {
-                        email,
-                        nome: payload?.name,
-                        cliente: payload?.provider?.name,
-                        funcao: payload?.role,
-                        id: payload?.id,
-                        customerid: payload?.customerId,
-                        organizationid: payload?.organizationId,
-                        ticket: `${new Date()
-                          .toISOString()
-                          .split('T')[0]
-                          .replaceAll('-', '')}${btoa(
-                          Math.random().toString()
-                        ).substring(10, 5)}`,
-                      },
-                    }).open()
-                  }
-                >
-                  <i className="fas fa-ticket mr-2 text-gray-300 text-base"></i>
-                  Criar ticket
-                </button>
-              </li>
-              <li className="items-center">
-                <Link
-                  href="/dash/sla"
-                  className={
-                    'text-xs uppercase py-3 font-bold block ' +
-                    (router.pathname.indexOf('/dash/sla') !== -1
-                      ? 'text-blue-500 hover:text-blue-600'
-                      : 'text-gray-700 hover:text-gray-500')
-                  }
-                >
-                  <i
-                    className={
-                      'fas fa-table mr-2 text-sm ' +
-                      (router.pathname.indexOf('/dash/sla') !== -1
-                        ? 'opacity-75'
-                        : 'text-gray-300')
-                    }
-                  ></i>{' '}
-                  SLA
-                </Link>
-              </li>
-            </ul>
-
-            {/* Divider */}
-            <hr className="my-4 md:min-w-full" />
-            {/* Heading */}
-            <h6 className="md:min-w-full text-gray-500 text-xs uppercase font-bold block pt-1 pb-4 no-underline">
               Documentação
             </h6>
             {/* Navigation */}
             <ul className="md:flex-col md:min-w-full flex flex-col list-none md:mb-4">
               <li className="inline-flex">
                 <a
-                  href="https://docs.iniciador.com.br/docs"
+                  href="https://app.getpostman.com/run-collection/24863168-1e9bedb3-fa00-4efa-9a91-8c82f3cd39cf?action=collection%2Ffork&collection-url=entityId%3D24863168-1e9bedb3-fa00-4efa-9a91-8c82f3cd39cf%26entityType%3Dcollection%26workspaceId%3D449f39d5-fbc0-4907-b84a-8ecfc771c5f5"
                   target="_blank"
                   rel="noreferrer"
                   className="text-gray-700 hover:text-gray-500 text-sm block mb-4 no-underline font-semibold"

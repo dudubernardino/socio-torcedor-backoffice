@@ -49,7 +49,7 @@ function User({ currentUser }) {
   return (
     <>
       <Head>
-        <title>{user?.name || ''} Usuário - Backoffice Iniciador</title>
+        <title>{user?.name || ''} Usuário - Backoffice Sócio API</title>
       </Head>
       <div className="relative md:ml-64 bg-gray-100 h-full">
         {isLoading && (

@@ -12,20 +12,11 @@ export const HeaderOutside = () => {
             href="/"
             className="flex justify-center items-center text-white text-sm font-bold leading-relaxed mr-4 py-2 whitespace-nowrap uppercase"
           >
-            <svg
-              className="mr-3"
-              width="32"
-              height="32"
-              viewBox="0 0 32 32"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M2.74528 13.7327C38.0274 -3.65214 23.1183 18.0006 11.2535 31M11.2535 31C25.5065 16.0872 43.5839 -8.59981 1.86915 11.9546M11.2535 31C27.8823 14.1858 49.1119 -13.5159 1 10.1907"
-                stroke="white"
-                strokeWidth="1.48357"
-              />
-            </svg>
+            <img
+              src="/socio-torcedor-logo.png"
+              className="w-28 h-28"
+              alt="Sócio API Logo"
+            />
             Backoffice
           </Link>
           <button
@@ -44,7 +35,7 @@ export const HeaderOutside = () => {
             <li className="flex items-center mr-3">
               <a
                 className="lg:text-white lg:hover:text-gray-200 text-gray-700 px-3 py-4 lg:py-2 flex items-center text-xs uppercase font-bold"
-                href="https://docs.iniciador.com.br/docs"
+                href="https://app.getpostman.com/run-collection/24863168-1e9bedb3-fa00-4efa-9a91-8c82f3cd39cf?action=collection%2Ffork&collection-url=entityId%3D24863168-1e9bedb3-fa00-4efa-9a91-8c82f3cd39cf%26entityType%3Dcollection%26workspaceId%3D449f39d5-fbc0-4907-b84a-8ecfc771c5f5"
                 target="_blank"
                 rel="noreferrer"
               >
@@ -56,7 +47,7 @@ export const HeaderOutside = () => {
             <li className="flex items-center">
               <a
                 className="bg-white text-gray-700 active:bg-gray-50 text-xs font-bold uppercase px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none ease-linear transition-all duration-150"
-                href="https://iniciador.com.br"
+                href="https://www.linkedin.com/in/dudubernardino"
                 target="_blank"
                 rel="noreferrer"
               >
@@ -80,7 +71,7 @@ export const HeaderOutside = () => {
                 href="/"
                 className="md:block text-left md:pb-2 text-gray-600 mr-0 inline-block whitespace-nowrap text-sm uppercase font-bold p-4 px-0"
               >
-                Backoffice Iniciador
+                Backoffice Sócio API
               </Link>
             </div>
             <div className="w-6/12 flex justify-end">
@@ -97,7 +88,7 @@ export const HeaderOutside = () => {
               <li className="flex items-center">
                 <a
                   className="lg:text-white lg:hover:text-gray-200 text-gray-700 px-3 py-4 lg:py-2 flex items-center text-xs uppercase font-bold"
-                  href="https://docs.iniciador.com.br/docs"
+                  href="https://app.getpostman.com/run-collection/24863168-1e9bedb3-fa00-4efa-9a91-8c82f3cd39cf?action=collection%2Ffork&collection-url=entityId%3D24863168-1e9bedb3-fa00-4efa-9a91-8c82f3cd39cf%26entityType%3Dcollection%26workspaceId%3D449f39d5-fbc0-4907-b84a-8ecfc771c5f5"
                   target="_blank"
                   rel="noreferrer"
                 >
@@ -108,7 +99,7 @@ export const HeaderOutside = () => {
               <li className="flex items-center">
                 <a
                   className="bg-white text-gray-700 active:bg-gray-50 text-xs font-bold uppercase px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none lg:mr-1 lg:mb-0 m-3 ease-linear transition-all duration-150"
-                  href="https://iniciador.com.br"
+                  href="https://www.linkedin.com/in/dudubernardino"
                   target="_blank"
                   rel="noreferrer"
                 >

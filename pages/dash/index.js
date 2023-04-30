@@ -6,7 +6,7 @@ function Dash() {
   return (
     <>
       <Head>
-        <title>Dash - Backoffice Iniciador</title>
+        <title>Dash - Backoffice Sócio API</title>
       </Head>
       <div className="relative md:ml-64 bg-gray-100 h-full">
         <Stats />
@@ -26,7 +26,7 @@ export default Dash
 export const getServerSideProps = async ({ req, res }) => {
   return {
     redirect: {
-      destination: '/dash/payments',
+      destination: '/dash/teams',
       permanent: false,
     },
   }

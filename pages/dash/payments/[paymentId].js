@@ -22,7 +22,7 @@ function Payment() {
   return (
     <>
       <Head>
-        <title>{`Iniciação ${payment?.id}`} - Backoffice Iniciador</title>
+        <title>{`Iniciação ${payment?.id}`} - Backoffice Sócio API</title>
       </Head>
       <div className="relative md:ml-64 bg-gray-100 h-full">
         {isLoading && (

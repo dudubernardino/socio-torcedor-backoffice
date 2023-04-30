@@ -57,7 +57,7 @@ function Application({ banks }) {
   return (
     <>
       <Head>
-        <title>{application?.name || 'Aplicação'} - Backoffice Iniciador</title>
+        <title>{application?.name || 'Aplicação'} - Backoffice Sócio API</title>
       </Head>
       <div className="relative md:ml-64 bg-gray-100 h-full">
         {isLoading && (
