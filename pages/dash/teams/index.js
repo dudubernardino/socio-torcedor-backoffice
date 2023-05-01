@@ -47,6 +47,18 @@ function Teams() {
     )
   }
 
+  const activeMembershipsCount = teams.reduce((count, obj) => {
+    return (
+      count +
+      obj.users.reduce((userCount, user) => {
+        const firstMembership = user.memberships.find(
+          (membership) => membership.status === 'ACTIVE'
+        )
+        return userCount + (firstMembership ? 1 : 0)
+      }, 0)
+    )
+  }, 0)
+
   return (
     <>
       <Head>
@@ -138,6 +150,12 @@ function Teams() {
                       Status
                     </th>
                     <th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-gray-50 text-gray-500 border-gray-100">
+                      Quantidade de Usuários
+                    </th>
+                    <th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-gray-50 text-gray-500 border-gray-100">
+                      Quantidade de Sócios Ativos
+                    </th>
+                    <th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-gray-50 text-gray-500 border-gray-100">
                       Criado em
                     </th>
                   </tr>
@@ -170,40 +188,50 @@ function Teams() {
                       </td>
                     </tr>
                   )}
-                  {teams.map(({ id, createdAt, status, name, email }) => (
-                    <tr
-                      key={id}
-                      onClick={accessTeam(id)}
-                      className="hover:bg-gray-200 cursor-pointer"
-                    >
-                      <td className="border-t-0 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                        <div className="truncate w-24">{id}</div>
-                      </td>
-                      <td className="border-t-0 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                        <div className="truncate w-24">{name}</div>
-                      </td>
-                      <td className="border-t-0 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                        <div className="truncate w-24">{email}</div>
-                      </td>
-                      <td
-                        className={
-                          'font-medium border-t-0 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 ' +
-                          getStatusColor(status)
-                        }
+                  {teams.map(
+                    ({ id, createdAt, status, name, email, users }) => (
+                      <tr
+                        key={id}
+                        onClick={accessTeam(id)}
+                        className="hover:bg-gray-200 cursor-pointer"
                       >
-                        <span className="p-2 rounded-md bg-stone-200">
-                          {status}
-                        </span>
-                      </td>
-                      <td className="border-t-0 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left">
-                        <span className="flex items-center ml-3 font-bold text-gray-600">
-                          {createdAt
-                            ? new Date(createdAt).toLocaleString('pt-BR')
-                            : ''}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
+                        <td className="border-t-0 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                          <div className="truncate w-24">{id}</div>
+                        </td>
+                        <td className="border-t-0 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                          <div className="truncate w-24">{name}</div>
+                        </td>
+                        <td className="border-t-0 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                          <div className="truncate w-24">{email}</div>
+                        </td>
+                        <td
+                          className={
+                            'font-medium border-t-0 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 ' +
+                            getStatusColor(status)
+                          }
+                        >
+                          <span className="p-2 rounded-md bg-stone-200">
+                            {status}
+                          </span>
+                        </td>
+                        <td className="border-t-0 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                          <div className="truncate w-24">{users.length}</div>
+                        </td>
+                        <td className="border-t-0 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                          <div className="truncate w-24">
+                            {activeMembershipsCount}
+                          </div>
+                        </td>
+                        <td className="border-t-0 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left">
+                          <span className="flex items-center ml-3 font-bold text-gray-600">
+                            {createdAt
+                              ? new Date(createdAt).toLocaleString('pt-BR')
+                              : ''}
+                          </span>
+                        </td>
+                      </tr>
+                    )
+                  )}
                   {isRefreshing && (
                     <tr>
                       <td colSpan={9} className="text-center">

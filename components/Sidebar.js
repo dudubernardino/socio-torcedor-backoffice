@@ -47,30 +47,13 @@ export const Sidebar = () => {
   // Access control
   const hasTeams = ['SUPER_ADMIN'].includes(payload?.role)
 
-  const hasCustomers = [
-    'INIC_ADMIN',
-    'ORG_ADMIN',
-    'ORG_OPERATOR',
-    'SUPER_ADMIN', //remove when update backend
-  ].includes(payload?.role)
-
   const hasCustomerInfoOnly = ['CUSTOMER_ADMIN'].includes(payload?.role)
 
-  const hasUsers = [
-    'INIC_ADMIN',
-    'ORG_ADMIN',
-    'CUSTOMER_ADMIN',
-    'SUPER_ADMIN', //remove when update backend
-  ].includes(payload?.role)
+  const hasUsers = ['SUPER_ADMIN', 'ADMIN', 'MANAGER'].includes(payload?.role)
 
   const hasBilling = [
     'INIC_ADMIN',
     'ORG_ADMIN',
-    'SUPER_ADMIN', //remove when update backend
-  ].includes(payload?.role)
-
-  const hasOrgs = [
-    'INIC_ADMIN',
     'SUPER_ADMIN', //remove when update backend
   ].includes(payload?.role)
 
@@ -186,29 +169,6 @@ export const Sidebar = () => {
                   </Link>
                 </li>
               )}
-              {hasCustomers && (
-                <li className="items-center">
-                  <Link
-                    href="/dash/customers"
-                    className={
-                      'text-xs uppercase py-3 font-bold block ' +
-                      (router.pathname.indexOf('/dash/customers') !== -1
-                        ? 'text-blue-500 hover:text-blue-600'
-                        : 'text-gray-700 hover:text-gray-500')
-                    }
-                  >
-                    <i
-                      className={
-                        'fas fa-users mr-2 text-sm ' +
-                        (router.pathname.indexOf('/dash/customers') !== -1
-                          ? 'opacity-75'
-                          : 'text-gray-300')
-                      }
-                    ></i>{' '}
-                    Clientes
-                  </Link>
-                </li>
-              )}
               {hasCustomerInfoOnly && (
                 <li className="items-center">
                   <Link
@@ -253,29 +213,6 @@ export const Sidebar = () => {
                       }
                     ></i>{' '}
                     Usuários
-                  </Link>
-                </li>
-              )}
-              {hasOrgs && (
-                <li className="items-center">
-                  <Link
-                    href="/dash/orgs"
-                    className={
-                      'text-xs uppercase py-3 font-bold block ' +
-                      (router.pathname.indexOf('/dash/orgs') !== -1
-                        ? 'text-blue-500 hover:text-blue-600'
-                        : 'text-gray-700 hover:text-gray-500')
-                    }
-                  >
-                    <i
-                      className={
-                        'fas fa-users-rays mr-2 text-sm ' +
-                        (router.pathname.indexOf('/dash/orgs') !== -1
-                          ? 'opacity-75'
-                          : 'text-gray-300')
-                      }
-                    ></i>{' '}
-                    Orgs
                   </Link>
                 </li>
               )}

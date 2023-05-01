@@ -26,7 +26,7 @@ export default Dash
 export const getServerSideProps = async ({ req, res }) => {
   return {
     redirect: {
-      destination: '/dash/teams',
+      destination: '/dash/users',
       permanent: false,
     },
   }

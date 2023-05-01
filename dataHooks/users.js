@@ -5,8 +5,8 @@ export const useUsers = () => {
   const { data, error } = useSWR({ path: `/users?limit=${limit}` })
 
   return {
-    users: data?.data,
-    isLoading: !error && !data?.data,
+    users: data,
+    isLoading: !error && !data,
     isError: error,
     isEmpty:
       !error && data?.data && Array.isArray(data?.data) && !data?.data?.length,

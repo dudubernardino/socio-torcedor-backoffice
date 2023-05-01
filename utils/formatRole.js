@@ -1,6 +1,6 @@
 export const formatRole = (role) => {
-  if (role.includes('CUSTOMER_ADMIN')) return 'Admin cliente'
-  if (role.includes('CUSTOMER_OPERATOR')) return 'Operador cliente'
-  if (role.includes('ORG_ADMIN')) return 'Admin'
-  if (role.includes('ORG_OPERATOR')) return 'Operador'
+  if (role.includes('SUPER_ADMIN')) return 'Super Admin'
+  if (role.includes('ADMIN')) return 'Admin'
+  if (role.includes('MANAGER')) return 'Manager'
+  if (role.includes('USER')) return 'User'
 }

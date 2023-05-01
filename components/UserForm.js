@@ -4,6 +4,10 @@ import Select from 'react-select'
 
 import { ButtonToggleStatusEntity } from './ButtonToggleStatusEntity'
 import { formatRole } from 'utils/formatRole'
+import { CpfCnpj } from './CpfCnpj'
+import { formatGender } from 'utils/formatGender'
+
+import { isValidCPF } from '@brazilian-utils/brazilian-utils'
 
 export const UserForm = ({
   user = {},
@@ -27,7 +31,7 @@ export const UserForm = ({
   const getRules = process.env.NEXT_PUBLIC_ROLES.split(',').reduce(
     (acc, item) => {
       // Show every role to INIC
-      if (whereUserBelong.includes('INIC')) {
+      if (whereUserBelong.includes('SUPER')) {
         return [
           ...acc,
           {
@@ -53,6 +57,17 @@ export const UserForm = ({
   )
 
   const roles = process.env.NEXT_PUBLIC_ROLES ? getRules : []
+  const genders = process.env.NEXT_PUBLIC_GENDERS
+    ? process.env.NEXT_PUBLIC_GENDERS.split(',').reduce((acc, item) => {
+        return [
+          ...acc,
+          {
+            value: item,
+            label: formatGender(item),
+          },
+        ]
+      }, [])
+    : []
 
   return (
     <div className="px-4 md:px-10 mx-auto w-full bg-gray-100 py-6">
@@ -138,6 +153,134 @@ export const UserForm = ({
                   </p>
                 </div>
               </div>
+              <div className="w-full lg:w-12/12 px-4">
+                <div className="relative w-full mb-3">
+                  <label className="block uppercase text-gray-600 text-xs font-bold mb-2">
+                    Senha
+                  </label>
+                  <input
+                    type="password"
+                    className="border-0 px-3 py-3 placeholder-gray-300 text-gray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150 disabled:bg-transparent disabled:shadow-none disabled:pl-0 disabled:pl-0"
+                    placeholder="*********"
+                    {...register('password')}
+                    disabled={disabled}
+                  />
+                  <p className="text-xs text-red-600 mt-1">
+                    {errors.password?.message}
+                  </p>
+                </div>
+              </div>
+              <div className="w-full lg:w-12/12 px-4">
+                <div className="relative w-full mb-3">
+                  <label className="block uppercase text-gray-600 text-xs font-bold mb-2">
+                    Confirmar senha
+                  </label>
+                  <input
+                    type="password"
+                    className="border-0 px-3 py-3 placeholder-gray-300 text-gray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150 disabled:bg-transparent disabled:shadow-none disabled:pl-0 disabled:pl-0"
+                    placeholder="*********"
+                    {...register('confirmPassword')}
+                    disabled={disabled}
+                  />
+                  <p className="text-xs text-red-600 mt-1">
+                    {errors.confirmPassword?.message}
+                  </p>
+                </div>
+              </div>
+              <div className="w-full lg:w-6/12 px-4">
+                <div className="relative w-full mb-3">
+                  <label className="block uppercase text-gray-600 text-xs font-bold mb-2">
+                    CPF
+                  </label>
+                  <Controller
+                    name="taxId"
+                    rules={{
+                      required: 'CNPJ é um campo obrigatório.',
+                      validate: (v) => {
+                        const value = v.replace(/\.|\-/g, '')
+                        // validate CNPJ
+                        if (isValidCPF(value)) return true
+                        return `Insira um  'CNPJ válido`
+                      },
+                    }}
+                    control={control}
+                    render={({ field }) => (
+                      <CpfCnpj
+                        mask="CPF"
+                        placeholder="Seu CPF"
+                        {...field}
+                        disabled={disabled}
+                        onChange={(event) =>
+                          field.onChange(
+                            event.target.value.replace(/\.|\-|\//g, '')
+                          )
+                        }
+                        className="border-0 px-3 py-3 placeholder-gray-300 text-gray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150 disabled:bg-transparent disabled:shadow-none disabled:pl-0 disabled:pl-0"
+                      />
+                    )}
+                  />
+                  <p className="text-xs text-red-600 mt-1">
+                    {errors.taxId?.message}
+                  </p>
+                </div>
+              </div>
+              <div className="w-full lg:w-12/12 px-4">
+                <div className="relative w-full mb-3">
+                  <label className="block uppercase text-gray-600 text-xs font-bold mb-2">
+                    Data de Nascimento
+                  </label>
+                  <input
+                    type="text"
+                    autoFocus
+                    className="border-0 px-3 py-3 placeholder-gray-300 text-gray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150 disabled:bg-transparent disabled:shadow-none disabled:pl-0 disabled:pl-0"
+                    placeholder="2000-02-11"
+                    {...register('birthday')}
+                    disabled={disabled}
+                  />
+                  <p className="text-xs text-red-600 mt-1">
+                    {errors.birthday?.message}
+                  </p>
+                </div>
+              </div>
+              <div className="w-full lg:w-12/12 px-4">
+                <div className="relative w-full mb-3">
+                  <label className="block uppercase text-gray-600 text-xs font-bold mb-2">
+                    Gênero
+                  </label>
+                  {disabled ? (
+                    <p className="border-0 px-3 py-3 placeholder-gray-300 text-gray-600 rounded text-sm shadow bg-transparent shadow-none pl-0 pl-0">
+                      {formatGender(user?.gender)}
+                    </p>
+                  ) : (
+                    <Controller
+                      control={control}
+                      name="gender"
+                      render={({ field }) => {
+                        return (
+                          <Select
+                            {...field}
+                            className="basic-single"
+                            classNamePrefix="select"
+                            isDisabled={disabled}
+                            isLoading={false}
+                            isClearable
+                            isSearchable
+                            placeholder="Procurar..."
+                            onChange={(data) => field.onChange(data.value)}
+                            value={genders.find(
+                              (item) => item.value === field.value
+                            )}
+                            options={genders}
+                          />
+                        )
+                      }}
+                    />
+                  )}
+                  <p className="text-xs text-red-600 mt-1">
+                    {errors.gender?.message}
+                  </p>
+                </div>
+              </div>
               {!disabled && (
                 <div className="flex items-center p-2 my-3 bg-slate-500 rounded-md">
                   <svg
@@ -156,9 +299,10 @@ export const UserForm = ({
                   </svg>
                   <p className="font-md font-medium text-white py-4">
                     Atenção! Existem 2 tipos de usuários: usuário admin e
-                    operador. <br /> O usuário admin tem acesso a todas as
-                    funcionalidades do sistema, enquanto o usuário operador tem
-                    acesso apenas à consulta das iniciações.
+                    manager. <br /> O usuário admin tem acesso a todas as
+                    funcionalidades do sistema, enquanto o usuário manager tem
+                    acesso apenas à consulta dos sócios e gerencimento de
+                    algumas funcionalidades.
                   </p>
                 </div>
               )}

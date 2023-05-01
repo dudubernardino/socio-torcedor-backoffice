@@ -147,7 +147,7 @@ export const getServerSideProps = async ({ req, res }) => {
   if (jwt) {
     return {
       redirect: {
-        destination: '/dash/teams',
+        destination: '/dash/users',
         permanent: false,
       },
     }

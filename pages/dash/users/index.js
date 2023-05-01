@@ -9,6 +9,7 @@ import { JSONParse } from 'utils/JSONParse'
 import { formatRole } from 'utils/formatRole'
 
 import { useUsers } from 'dataHooks/users'
+import { getMembershipStatusColor } from 'utils/getMembershipStatusColor'
 
 const Users = ({ data }) => {
   const router = useRouter()
@@ -22,10 +23,10 @@ const Users = ({ data }) => {
   }
 
   const filteredUsers = users.map((user) => {
-    if (!user?.customer?.name) return { ...user, 'customer.name': '' }
+    if (!user?.team?.name) return { ...user, 'team.name': '' }
     return user
   })
-  const groupedUsers = groupBy(filteredUsers, 'customer.name')
+  const groupedUsers = groupBy(filteredUsers, 'team.name')
 
   return (
     <>
@@ -56,19 +57,22 @@ const Users = ({ data }) => {
                       nome
                     </th>
                     <th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-gray-50 text-gray-500 border-gray-100">
-                      email
+                      time
                     </th>
                     <th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-gray-50 text-gray-500 border-gray-100">
-                      Criado em
+                      cpf
                     </th>
                     <th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-gray-50 text-gray-500 border-gray-100">
-                      Cliente
+                      status
                     </th>
                     <th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-gray-50 text-gray-500 border-gray-100">
-                      função
+                      sócio desde
                     </th>
                     <th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-gray-50 text-gray-500 border-gray-100">
-                      Status
+                      validade sócio
+                    </th>
+                    <th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-gray-50 text-gray-500 border-gray-100">
+                      criado em
                     </th>
                   </tr>
                 </thead>
@@ -102,12 +106,12 @@ const Users = ({ data }) => {
                   )}
                   {Object.entries(groupedUsers)
                     .sort(([a], [b]) => a.localeCompare(b))
-                    .map(([customerName, users]) => (
+                    .map(([teamName, users]) => (
                       <>
                         <tr>
                           <td colSpan={5} className="text-left">
                             <p className="text-sm font-medium  py-4 text-gray-600">
-                              {customerName || 'Seus usuários'}
+                              {teamName || 'Seus usuários'}
                             </p>
                           </td>
                         </tr>
@@ -117,10 +121,9 @@ const Users = ({ data }) => {
                             id,
                             createdAt,
                             name,
-                            email,
-                            role,
-                            customer,
-                            status,
+                            taxId,
+                            team,
+                            memberships,
                           }) => (
                             <tr
                               key={id}
@@ -131,31 +134,54 @@ const Users = ({ data }) => {
                                 {name}
                               </td>
                               <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                                {email}
+                                {team?.name ?? '-'}
                               </td>
+                              <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                                {taxId}
+                              </td>
+                              {!!memberships.length ? (
+                                <td
+                                  className={
+                                    'font-medium border-t-0 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 ' +
+                                    getMembershipStatusColor(
+                                      memberships[0].status
+                                    )
+                                  }
+                                >
+                                  <span className="p-2 rounded-md bg-stone-200">
+                                    {memberships[0].status}
+                                  </span>
+                                </td>
+                              ) : (
+                                <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                                  -
+                                </td>
+                              )}
+                              {!!memberships.length ? (
+                                <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                                  {new Date(
+                                    memberships[0].registrationDate
+                                  ).toLocaleDateString('pt-BR')}
+                                </td>
+                              ) : (
+                                <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                                  -
+                                </td>
+                              )}
+                              {!!memberships.length ? (
+                                <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                                  {new Date(
+                                    memberships[0].dueDate
+                                  ).toLocaleDateString('pt-BR')}
+                                </td>
+                              ) : (
+                                <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                                  -
+                                </td>
+                              )}
                               <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
                                 {new Date(createdAt).toLocaleDateString(
                                   'pt-BR'
-                                )}
-                              </td>
-                              <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                                {customer?.name ?? '-'}
-                              </td>
-                              <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                                {formatRole(role)}
-                              </td>
-                              <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                                {status === 'INACTIVE' && (
-                                  <>
-                                    <i className="fas fa-circle text-red-500 mr-2"></i>{' '}
-                                    inativo
-                                  </>
-                                )}
-                                {status === 'ACTIVE' && (
-                                  <>
-                                    <i className="fas fa-circle text-green-500 mr-2"></i>{' '}
-                                    ativo
-                                  </>
                                 )}
                               </td>
                             </tr>
