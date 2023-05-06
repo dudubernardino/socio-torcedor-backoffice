@@ -10,14 +10,7 @@ import { eres } from 'utils/eres'
 import { errorAlert } from 'utils/errorAlert'
 import { ButtonToggleStatusEntity } from './ButtonToggleStatusEntity'
 
-export const Applications = ({ teamId }) => {
-  const {
-    applications = [],
-    isLoading,
-    isError,
-    isEmpty,
-    mutate,
-  } = useApplications({ teamId })
+export const Plans = ({ plans, isLoading, isError, isEmpty, mutate }) => {
   const [open, setOpen] = useState(false)
   const [appToRefresh, setAppToRefresh] = useState(null)
   const [refreshSecret, setRefreshSecret] = useState(null)
@@ -49,14 +42,14 @@ export const Applications = ({ teamId }) => {
         <div className="rounded-t bg-white mb-0 px-6 py-6">
           <div className="text-center flex justify-between">
             <h6 id="keys" className="text-gray-700 text-xl font-bold">
-              Aplicações - chaves de API
+              Planos
             </h6>
             <div>
               <Link
-                href={`/dash/teams/${teamId}/new-app`}
+                href={`/dash/plans/new-plan`}
                 className="bg-gray-700 active:bg-gray-600 text-white font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
               >
-                Adicionar app
+                Adicionar plano
               </Link>
             </div>
           </div>
@@ -70,9 +63,7 @@ export const Applications = ({ teamId }) => {
         {isEmpty && (
           <div className="flex justify-center">
             <p className="text-md text-center max-w-lg text-gray-600 py-4">
-              Habilite a API, adicionando uma aplicação. <br />
-              Ao adicionar uma aplicação um clientId e clientSecret será gerado.
-              Utilize para fazer chamadas em nossa API
+              Adicione novos planos. <br />
             </p>
           </div>
         )}
@@ -232,48 +223,40 @@ export const Applications = ({ teamId }) => {
               </div>
             </Dialog>
           </Transition.Root>
-          {applications.map((item, index) => (
+          {plans?.map((item, index) => (
             <div key={item.id} className="rounded bg-white shadow-lg">
               <div className="px-6 py-4">
                 <div className="flex items-center mb-2">
                   <p className="font-bold text-lg text-gray-700">
-                    <span>
-                      {item?.name || `App ${index + 1}`}
-                      {' - '}
-                    </span>
-                    {item?.status === 'INACTIVE' ? (
-                      <>
-                        <i className="fas fa-circle text-red-500 my-1"></i>{' '}
-                        inativo
-                      </>
-                    ) : (
-                      <>
-                        <i className="fas fa-circle text-green-500 my-1"></i>{' '}
-                        ativo
-                      </>
-                    )}
+                    <span>{item?.name || `App ${index + 1}`}</span>
                   </p>
                 </div>
-                {!!item?.name && (
-                  <p className="text-gray-600 text-base">
-                    <b>Nome:</b> {item.name}
-                  </p>
-                )}
                 <p className="text-gray-600 text-base">
-                  <b>ClientId:</b> {item.clientId}
+                  <b>Preço:</b>{' '}
+                  {Number(item?.price).toLocaleString('pt-BR', {
+                    style: 'currency',
+                    currency: 'BRL',
+                  })}
                 </p>
-                {!!item?.paymentMethods && (
-                  <p className="text-gray-600 text-base">
-                    <b>Métodos de pagamento:</b>{' '}
-                    {item?.paymentMethods.map((item) => item.name).join(', ')}
+                <hr className="my-3 border-b-1 border-gray-300" />
+                <div className="flex items-center mb-2">
+                  <p className="font-bold text-lg text-gray-700">
+                    <span>Setores</span>
                   </p>
-                )}
+                </div>
+                <p className="text-gray-600 text-base">
+                  {item?.sectors.map((sector) => (
+                    <div key={sector.id}>
+                      <b>Nome: {sector.name}</b>
+                    </div>
+                  ))}
+                </p>
                 <hr className="my-3 border-b-1 border-gray-300" />
                 <h3 className="font-semibold text-gray-700 mb-2">Ações</h3>
                 <Link
                   className="bg-gray-700 active:bg-gray-600 text-white font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150 mb-2"
                   type="button"
-                  href={`/dash/teams/${item.teamId}/apps/${item.id}`}
+                  href={`/dash/plans/${item.id}`}
                 >
                   Acessar
                 </Link>

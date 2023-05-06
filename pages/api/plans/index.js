@@ -1,6 +1,6 @@
 export default async function handler(req, res) {
   if (req.method === 'POST') {
-    const fetched = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/teams`, {
+    const fetched = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/plans`, {
       method: req.method,
       body: JSON.stringify(req.body),
       headers: {
@@ -14,7 +14,7 @@ export default async function handler(req, res) {
     return res.status(fetched.status).json(result)
   }
   if (req.method === 'GET') {
-    const uri = `${process.env.NEXT_PUBLIC_SERVER_URL}/teams?${
+    const uri = `${process.env.NEXT_PUBLIC_SERVER_URL}/plans?${
       req.url.split('?')[1]
     }`
     const fetched = await fetch(uri, {

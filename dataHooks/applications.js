@@ -1,17 +1,16 @@
 import useSWR from 'swr'
 
-export const useApplications = ({ customerId }) => {
+export const useApplications = ({ teamId }) => {
   const limit = 500
   const { data, error, mutate } = useSWR({
-    path: `/customers/${customerId}/apps?limit=${limit}`,
+    path: `/teams/${teamId}/apps?limit=${limit}`,
   })
 
   return {
-    applications: data?.data,
-    isLoading: !error && !data?.data,
+    applications: data,
+    isLoading: !error && !data,
     isError: error,
-    isEmpty:
-      !error && data?.data && Array.isArray(data?.data) && !data?.data?.length,
+    isEmpty: !error && data && Array.isArray(data) && !data?.length,
     mutate,
   }
 }

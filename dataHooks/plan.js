@@ -1,12 +1,12 @@
 import useSWR from 'swr'
 
-export const useApplication = ({ teamId, applicationId }) => {
+export const usePlan = ({ planId }) => {
   const { data, error, mutate } = useSWR({
-    path: `/teams/${teamId}/apps/${applicationId}`,
+    path: `/plans/${planId}`,
   })
 
   return {
-    application: data,
+    plan: data,
     isLoading: !error && !data,
     isError: error,
     mutate,

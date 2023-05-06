@@ -30,7 +30,7 @@ export const ButtonToggleStatusEntity = ({
     const endpoint = initialEndpoint ? initialEndpoint : `/${entityName}/${id}`
     const path = `${endpoint}/${isEnabled ? 'disable' : 'enable'}`
     const body = has2FA ? { token2fa } : null
-    const [error] = await eres(fetcher({ path, body, method: 'POST' }))
+    const [error] = await eres(fetcher({ path, body, method: 'PATCH' }))
 
     if (error) {
       return errorAlert(error)

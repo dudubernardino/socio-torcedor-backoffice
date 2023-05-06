@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import Select from 'react-select'
 
@@ -8,6 +8,8 @@ import { CpfCnpj } from './CpfCnpj'
 import { formatGender } from 'utils/formatGender'
 
 import { isValidCPF } from '@brazilian-utils/brazilian-utils'
+import { fetcher } from 'utils/fetcher'
+import { eres } from 'utils/eres'
 
 export const UserForm = ({
   user = {},
@@ -15,6 +17,7 @@ export const UserForm = ({
   setDisabled,
   onSubmit,
   currentUser,
+  hasTeamId,
 }) => {
   const {
     register,
@@ -24,6 +27,17 @@ export const UserForm = ({
   } = useForm({
     defaultValues: user,
   })
+
+  const [teams, setTeams] = useState([])
+  useEffect(() => {
+    const fetch = async () => {
+      const [error, result] = await eres(fetcher({ path: '/teams' }))
+
+      setTeams(result)
+    }
+
+    if (!hasTeamId) fetch()
+  }, [hasTeamId])
 
   const whereUserBelong =
     user?.role?.split('_')[0] || currentUser?.role?.split('_')[0] || ''
@@ -68,6 +82,16 @@ export const UserForm = ({
         ]
       }, [])
     : []
+
+  const selectTeams = teams?.reduce((acc, item) => {
+    return [
+      ...acc,
+      {
+        value: item.id,
+        label: item.name,
+      },
+    ]
+  }, [])
 
   return (
     <div className="px-4 md:px-10 mx-auto w-full bg-gray-100 py-6">
@@ -195,12 +219,12 @@ export const UserForm = ({
                   <Controller
                     name="taxId"
                     rules={{
-                      required: 'CNPJ é um campo obrigatório.',
+                      required: 'CPF é um campo obrigatório.',
                       validate: (v) => {
                         const value = v.replace(/\.|\-/g, '')
-                        // validate CNPJ
+                        // validate CPF
                         if (isValidCPF(value)) return true
-                        return `Insira um  'CNPJ válido`
+                        return `Insira um  'CPF válido`
                       },
                     }}
                     control={control}
@@ -345,6 +369,41 @@ export const UserForm = ({
                   </p>
                 </div>
               </div>
+              {teams && (
+                <div className="w-full lg:w-12/12 px-4">
+                  <div className="relative w-full mb-3">
+                    <label className="block uppercase text-gray-600 text-xs font-bold mb-2">
+                      Time
+                    </label>
+                    <Controller
+                      control={control}
+                      name="teamId"
+                      render={({ field }) => {
+                        return (
+                          <Select
+                            {...field}
+                            className="basic-single"
+                            classNamePrefix="select"
+                            isDisabled={disabled}
+                            isLoading={false}
+                            isClearable
+                            isSearchable
+                            placeholder="Procurar..."
+                            onChange={(data) => field.onChange(data.value)}
+                            value={selectTeams?.find(
+                              (item) => item.value === field.value
+                            )}
+                            options={selectTeams}
+                          />
+                        )
+                      }}
+                    />
+                    <p className="text-xs text-red-600 mt-1">
+                      {errors.teamId?.message}
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
           </form>
         </div>

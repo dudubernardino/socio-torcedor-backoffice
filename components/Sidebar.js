@@ -47,9 +47,9 @@ export const Sidebar = () => {
   // Access control
   const hasTeams = ['SUPER_ADMIN'].includes(payload?.role)
 
-  const hasCustomerInfoOnly = ['CUSTOMER_ADMIN'].includes(payload?.role)
-
   const hasUsers = ['SUPER_ADMIN', 'ADMIN', 'MANAGER'].includes(payload?.role)
+
+  const hasPlans = ['ADMIN', 'MANAGER'].includes(payload?.role)
 
   const hasBilling = [
     'INIC_ADMIN',
@@ -169,30 +169,6 @@ export const Sidebar = () => {
                   </Link>
                 </li>
               )}
-              {hasCustomerInfoOnly && (
-                <li className="items-center">
-                  <Link
-                    href={`/dash/customers/${payload?.customerId}`}
-                    className={
-                      'text-xs uppercase py-3 font-bold block ' +
-                      (router.pathname.indexOf('/dash/customers') !== -1
-                        ? 'text-blue-500 hover:text-blue-600'
-                        : 'text-gray-700 hover:text-gray-500')
-                    }
-                  >
-                    <i
-                      className={
-                        'fas fa-building mr-2 text-sm ' +
-                        (router.pathname.indexOf('/dash/customers') !== -1
-                          ? 'opacity-75'
-                          : 'text-gray-300')
-                      }
-                    ></i>{' '}
-                    Minha empresa / apps
-                  </Link>
-                </li>
-              )}
-
               {hasUsers && (
                 <li className="items-center">
                   <Link
@@ -213,6 +189,29 @@ export const Sidebar = () => {
                       }
                     ></i>{' '}
                     Usuários
+                  </Link>
+                </li>
+              )}
+              {hasPlans && (
+                <li className="items-center">
+                  <Link
+                    href="/dash/plans"
+                    className={
+                      'text-xs uppercase py-3 font-bold block ' +
+                      (router.pathname.indexOf('/dash/plans') !== -1
+                        ? 'text-blue-500 hover:text-blue-600'
+                        : 'text-gray-700 hover:text-gray-500')
+                    }
+                  >
+                    <i
+                      className={
+                        'fas fa-money-check mr-2 text-sm ' +
+                        (router.pathname.indexOf('/dash/plans') !== -1
+                          ? 'opacity-75'
+                          : 'text-gray-300')
+                      }
+                    ></i>{' '}
+                    Planos
                   </Link>
                 </li>
               )}
@@ -262,32 +261,6 @@ export const Sidebar = () => {
                   </Link>
                 </li>
               )}
-              <li className="items-center">
-                <Link
-                  href="/dash/2fa"
-                  className={
-                    'text-xs uppercase py-3 font-bold block ' +
-                    (router.pathname.indexOf('/dash/2fa') !== -1
-                      ? 'text-blue-500 hover:text-blue-600'
-                      : 'text-gray-700 hover:text-gray-500')
-                  }
-                >
-                  <i
-                    className={
-                      'fas fa-lock mr-2 text-sm ' +
-                      (router.pathname.indexOf('/dash/2fa') !== -1
-                        ? 'opacity-75'
-                        : 'text-gray-300')
-                    }
-                  ></i>{' '}
-                  <i
-                    className={`fas fa-circle ${
-                      payload?.enable2FA ? 'text-green-400' : 'text-red-400'
-                    } mr-2`}
-                  />
-                  2fa{' '}
-                </Link>
-              </li>
             </ul>
 
             {/* Divider */}

@@ -6,6 +6,7 @@ import Datepicker from 'react-tailwindcss-datepicker'
 import { removeEmptyFields } from 'utils/removeEmptyFields'
 import { useTeams } from 'dataHooks/teams'
 import { getStatusColor } from 'utils/getStatusColor'
+import Link from 'next/link'
 
 function Teams() {
   const router = useRouter()
@@ -15,16 +16,7 @@ function Teams() {
     endDate: null,
   })
 
-  const {
-    teams = [],
-    isLoading,
-    isError,
-    isEmpty,
-    size,
-    setSize,
-    isRefreshing,
-    isTheEnd,
-  } = useTeams({ filterParams })
+  const { teams = [], isLoading, isError, isEmpty } = useTeams({ filterParams })
 
   const accessTeam = (id) => (event) => {
     event.preventDefault()
@@ -47,17 +39,13 @@ function Teams() {
     )
   }
 
-  const activeMembershipsCount = teams.reduce((count, obj) => {
-    return (
-      count +
-      obj.users.reduce((userCount, user) => {
-        const firstMembership = user.memberships.find(
-          (membership) => membership.status === 'ACTIVE'
-        )
-        return userCount + (firstMembership ? 1 : 0)
-      }, 0)
-    )
-  }, 0)
+  const activeMembershipsCount = (users) => {
+    return users.reduce((userCount, user) => {
+      const firstMembership = user.memberships[0]
+      const isActive = firstMembership?.status === 'ACTIVE'
+      return userCount + (isActive ? 1 : 0)
+    }, 0)
+  }
 
   return (
     <>
@@ -70,6 +58,12 @@ function Teams() {
             <h2 className="text-xl text-gray-800 font-semibold py-4 mr-3">
               Times
             </h2>
+            <Link
+              href="/dash/teams/new"
+              className="bg-gray-700 h-8 active:bg-gray-600 text-white font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
+            >
+              Registrar novo
+            </Link>
           </div>
           <form
             onSubmit={submitFilter}
@@ -219,7 +213,7 @@ function Teams() {
                         </td>
                         <td className="border-t-0 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
                           <div className="truncate w-24">
-                            {activeMembershipsCount}
+                            {activeMembershipsCount(users)}
                           </div>
                         </td>
                         <td className="border-t-0 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left">
@@ -231,15 +225,6 @@ function Teams() {
                         </td>
                       </tr>
                     )
-                  )}
-                  {isRefreshing && (
-                    <tr>
-                      <td colSpan={9} className="text-center">
-                        <p className="text-sm font-medium text-center py-4 text-gray-600">
-                          Atualizando...
-                        </p>
-                      </td>
-                    </tr>
                   )}
                 </tbody>
               </table>

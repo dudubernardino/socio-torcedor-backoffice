@@ -14,12 +14,17 @@ import { UserForm } from 'components/UserForm'
 
 function UserCreate({ currentUser }) {
   const router = useRouter()
+  const hasTeamId = currentUser.teamId || false
 
   const onSubmit = async (data) => {
     const body = removeEmptyFields(data)
 
+    if (!currentUser.teamId) {
+      body.teamId = data.teamId
+    }
+
     const [error, result] = await eres(
-      fetcher({ path: `/users`, body, method: 'POST' })
+      fetcher({ path: `/users/custom`, body, method: 'POST' })
     )
 
     if (error) {
@@ -40,6 +45,7 @@ function UserCreate({ currentUser }) {
           onSubmit={onSubmit}
           setDisabled={() => router.back()}
           currentUser={currentUser}
+          hasTeamId={hasTeamId}
         />
       </div>
     </>
