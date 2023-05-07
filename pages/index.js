@@ -46,6 +46,11 @@ function Login() {
       return
     }
 
+    const dataFromToken = decodeJwt(data?.accessToken)?.payload
+
+    if (dataFromToken.role === 'USER')
+      return setError('Usuário não possui permissão para acessar a plataforma.')
+
     setCookie('jwt', data?.accessToken, {
       path: '/',
       sameSite: true,

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Link from 'next/link'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
@@ -6,14 +6,33 @@ import { getCookie } from 'cookies-next'
 import groupBy from 'lodash.groupby'
 
 import { JSONParse } from 'utils/JSONParse'
-import { formatRole } from 'utils/formatRole'
 
 import { useUsers } from 'dataHooks/users'
 import { getMembershipStatusColor } from 'utils/getMembershipStatusColor'
+import Datepicker from 'react-tailwindcss-datepicker'
 
 const Users = ({ data }) => {
   const router = useRouter()
+  const [filterParams, setFilterParams] = useState(null)
+  const [value, setValue] = useState({
+    startDate: null,
+    endDate: null,
+  })
   const { users = [], isLoading, isError, isEmpty } = useUsers()
+
+  const submitFilter = (event) => {
+    event.preventDefault()
+    const startDate = value?.startDate
+    const endDate = value?.endDate
+
+    setFilterParams(
+      removeEmptyFields({
+        text: event.target?.search?.value,
+        startDate: startDate ? startDate : null,
+        endDate: endDate ? endDate : null,
+      })
+    )
+  }
 
   const accessUser = (userId) => (event) => {
     event.preventDefault()
@@ -46,6 +65,66 @@ const Users = ({ data }) => {
               Registrar novo
             </Link>
           </div>
+
+          <form
+            onSubmit={submitFilter}
+            className="mb-4 grid md:grid-cols-8 gap-3"
+          >
+            <div className="relative col-span-5">
+              <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
+                <svg
+                  aria-hidden="true"
+                  className="w-5 h-5 text-gray-500 dark:text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  ></path>
+                </svg>
+              </div>
+              <input
+                type="search"
+                name="search"
+                className="block p-2.5 pl-10 w-full text-sm text-gray-900 bg-white rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Buscar por IDs, Status, Email, CNPJ, etc"
+              />
+            </div>
+            <div className="col-span-4 md:col-span-2">
+              <Datepicker
+                i18n={'pt-br'}
+                configs={{
+                  shortcuts: {
+                    today: 'Hoje',
+                    yesterday: 'Ontem',
+                    past: (period) => `Últimos ${period} dias`,
+                    currentMonth: 'Mês atual',
+                    pastMonth: 'Último mês',
+                  },
+                  footer: {
+                    cancel: 'Cancelar',
+                    apply: 'Aplicar',
+                  },
+                }}
+                value={value}
+                onChange={setValue}
+                showShortcuts
+                separator="~"
+                displayFormat="DD/MM/YYYY"
+              />
+            </div>
+            <button
+              type="submit"
+              className="text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2"
+            >
+              Buscar
+            </button>
+          </form>
 
           <div className="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded bg-white">
             <div className="block w-full overflow-x-auto">

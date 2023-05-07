@@ -39,7 +39,7 @@ function ForgotSecret() {
   }
 
   return (
-    <div className="bg-black bg-[url('./../public/iniciador_lines.png')] bg-right-bottom bg-no-repeat bg-contain h-full">
+    <div className="bg-black bg-right-bottom bg-no-repeat bg-contain h-full">
       <Head>
         <title>Esqueci minha senha - Iniciador</title>
       </Head>
