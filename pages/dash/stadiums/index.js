@@ -7,18 +7,25 @@ import groupBy from 'lodash.groupby'
 
 import { JSONParse } from 'utils/JSONParse'
 
-import { useUsers } from 'dataHooks/users'
 import { getMembershipStatusColor } from 'utils/getMembershipStatusColor'
 import Datepicker from 'react-tailwindcss-datepicker'
+import { useMatches } from 'dataHooks/matches'
+import { format, parseISO } from 'date-fns'
+import { useStadiums } from 'dataHooks/stadiums'
 
-const Users = ({ data }) => {
+const Stadiums = () => {
   const router = useRouter()
   const [filterParams, setFilterParams] = useState(null)
   const [value, setValue] = useState({
     startDate: null,
     endDate: null,
   })
-  const { users = [], isLoading, isError, isEmpty } = useUsers()
+  const {
+    stadiums = [],
+    isLoading,
+    isError,
+    isEmpty,
+  } = useStadiums({ filterParams })
 
   const submitFilter = (event) => {
     event.preventDefault()
@@ -34,31 +41,25 @@ const Users = ({ data }) => {
     )
   }
 
-  const accessUser = (userId) => (event) => {
+  const accessStadium = (stadiumId) => (event) => {
     event.preventDefault()
 
-    router.push(`/dash/users/${userId}`)
+    router.push(`/dash/stadiums/${stadiumId}`)
   }
-
-  const filteredUsers = users.map((user) => {
-    if (!user?.team?.name) return { ...user, 'team.name': '' }
-    return user
-  })
-  const groupedUsers = groupBy(filteredUsers, 'team.name')
 
   return (
     <>
       <Head>
-        <title>Usuários - Backoffice Sócio API</title>
+        <title>Estádios - Backoffice Sócio API</title>
       </Head>
       <div className="relative md:ml-64 bg-gray-100 h-full">
         <div className="px-4 md:px-10 mx-auto w-full">
           <div className="flex items-center">
             <h2 className="text-xl text-gray-800 font-semibold py-4 mr-3">
-              Usuários
+              Estádios
             </h2>
             <Link
-              href="/dash/users/new"
+              href="/dash/stadiums/new"
               className="bg-gray-700 h-8 active:bg-gray-600 text-white font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
             >
               Registrar novo
@@ -91,7 +92,7 @@ const Users = ({ data }) => {
                 type="search"
                 name="search"
                 className="block p-2.5 pl-10 w-full text-sm text-gray-900 bg-white rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Buscar por IDs, Status, Email, CNPJ, etc"
+                placeholder="Buscar por IDs, Estádios, etc"
               />
             </div>
             <div className="col-span-4 md:col-span-2">
@@ -132,22 +133,10 @@ const Users = ({ data }) => {
                 <thead>
                   <tr>
                     <th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-gray-50 text-gray-500 border-gray-100">
-                      nome
+                      Nome
                     </th>
                     <th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-gray-50 text-gray-500 border-gray-100">
-                      time
-                    </th>
-                    <th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-gray-50 text-gray-500 border-gray-100">
-                      cpf
-                    </th>
-                    <th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-gray-50 text-gray-500 border-gray-100">
-                      status
-                    </th>
-                    <th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-gray-50 text-gray-500 border-gray-100">
-                      sócio desde
-                    </th>
-                    <th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-gray-50 text-gray-500 border-gray-100">
-                      validade sócio
+                      Setores
                     </th>
                     <th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-gray-50 text-gray-500 border-gray-100">
                       criado em
@@ -182,91 +171,23 @@ const Users = ({ data }) => {
                       </td>
                     </tr>
                   )}
-                  {Object.entries(groupedUsers)
-                    .sort(([a], [b]) => a.localeCompare(b))
-                    .map(([teamName, users]) => (
-                      <>
-                        <tr>
-                          <td colSpan={5} className="text-left">
-                            <p className="text-sm font-medium  py-4 text-gray-600">
-                              {`${teamName} - ${users.length} usuários` || 'Seus usuários'}
-                            </p>
-                          </td>
-                        </tr>
-
-                        {users.map(
-                          ({
-                            id,
-                            createdAt,
-                            name,
-                            taxId,
-                            team,
-                            memberships,
-                          }) => (
-                            <tr
-                              key={id}
-                              onClick={accessUser(id)}
-                              className="hover:bg-gray-200 cursor-pointer"
-                            >
-                              <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                                {name}
-                              </td>
-                              <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                                {team?.name ?? '-'}
-                              </td>
-                              <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                                {taxId}
-                              </td>
-                              {!!memberships.length ? (
-                                <td
-                                  className={
-                                    'font-medium border-t-0 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 ' +
-                                    getMembershipStatusColor(
-                                      memberships[0].status
-                                    )
-                                  }
-                                >
-                                  <span className="p-2 rounded-md bg-stone-200">
-                                    {memberships[0].status}
-                                  </span>
-                                </td>
-                              ) : (
-                                <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                                  -
-                                </td>
-                              )}
-                              {!!memberships.length ? (
-                                <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                                  {new Date(
-                                    memberships[0].registrationDate
-                                  ).toLocaleDateString('pt-BR')}
-                                </td>
-                              ) : (
-                                <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                                  -
-                                </td>
-                              )}
-                              {!!memberships.length ? (
-                                <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                                  {new Date(
-                                    memberships[0].dueDate
-                                  ).toLocaleDateString('pt-BR')}
-                                </td>
-                              ) : (
-                                <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                                  -
-                                </td>
-                              )}
-                              <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                                {new Date(createdAt).toLocaleDateString(
-                                  'pt-BR'
-                                )}
-                              </td>
-                            </tr>
-                          )
-                        )}
-                      </>
-                    ))}
+                  {stadiums.map(({ id, name, sectors, createdAt }) => (
+                    <tr
+                      key={id}
+                      onClick={accessStadium(id)}
+                      className="hover:bg-gray-200 cursor-pointer"
+                    >
+                      <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                        {name}
+                      </td>
+                      <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                        {sectors?.map((sector) => sector.name).toString()}
+                      </td>
+                      <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                        {new Date(createdAt).toLocaleDateString('pt-BR')}
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>
@@ -277,7 +198,7 @@ const Users = ({ data }) => {
   )
 }
 
-export default Users
+export default Stadiums
 
 export const getServerSideProps = async ({ req, res }) => {
   const data = getCookie('data', { req, res }) || {}

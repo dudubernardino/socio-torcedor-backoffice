@@ -9,17 +9,17 @@ import { eres } from 'utils/eres'
 import { errorAlert } from 'utils/errorAlert'
 import { JSONParse } from 'utils/JSONParse'
 
-import { UserForm } from 'components/UserForm'
-
 import { removeEmptyFields } from 'utils/removeEmptyFields'
 import { useMatch } from 'dataHooks/match'
 import { MatchForm } from 'components/MatchForm'
+import { useStadium } from 'dataHooks/stadium'
+import { StadiumForm } from 'components/StadiumForm'
 
-function Match({ currentUser }) {
+function Stadium({ currentUser }) {
   const router = useRouter()
   const [disabled, setDisabled] = useState(true)
-  const matchId = router?.query?.matchId
-  const { match, isLoading, isError, mutate } = useMatch({ matchId })
+  const stadiumId = router?.query?.stadiumId
+  const { stadium, isLoading, isError, mutate } = useStadium({ stadiumId })
 
   const [stadiums, setStadiums] = useState([])
   useEffect(() => {
@@ -35,12 +35,8 @@ function Match({ currentUser }) {
   const onSubmit = async (data) => {
     const body = removeEmptyFields(data)
 
-    const startTime = `${body.dateTime.endDate} ${body.time}`
-
-    body.startTime = startTime
-
     const [error, result] = await eres(
-      fetcher({ path: `/matches/${matchId}`, body, method: 'PATCH' })
+      fetcher({ path: `/stadiums/${stadiumId}`, body, method: 'PATCH' })
     )
 
     if (error) {
@@ -55,10 +51,7 @@ function Match({ currentUser }) {
   return (
     <>
       <Head>
-        <title>
-          {match?.id ? `${match.homeTeam} x ${match.awayTeam}` : ''} -
-          Backoffice Sócio API
-        </title>
+        <title>{stadium?.id ? stadium.name : ''} - Backoffice Sócio API</title>
       </Head>
       <div className="relative md:ml-64 bg-gray-100 h-full">
         {isLoading && (
@@ -71,19 +64,18 @@ function Match({ currentUser }) {
             Erro ao buscar dados
           </p>
         )}
-        {!isLoading && !match && (
+        {!isLoading && !stadium && (
           <p className="text-sm font-medium text-center py-4 text-gray-600">
             Não foi possivel carregar o usuário.
           </p>
         )}
         {!isLoading && (
-          <MatchForm
+          <StadiumForm
             disabled={disabled}
             setDisabled={setDisabled}
-            match={match}
             onSubmit={onSubmit}
             currentUser={currentUser}
-            stadiums={stadiums}
+            stadium={stadium}
           />
         )}
       </div>
@@ -91,7 +83,7 @@ function Match({ currentUser }) {
   )
 }
 
-export default Match
+export default Stadium
 
 export const getServerSideProps = async ({ req, res }) => {
   const data = getCookie('data', { req, res }) || {}

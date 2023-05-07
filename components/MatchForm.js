@@ -104,7 +104,7 @@ export const MatchForm = ({
         <div className="flex-auto px-6 py-10 pt-0">
           <form>
             <h6 className="text-gray-400 text-sm mt-3 mb-6 font-bold uppercase">
-              Informações da aplicação
+              Informações da partida
             </h6>
             <div className="flex flex-wrap">
               <div className="w-full lg:w-6/12 px-4">
