@@ -1,6 +1,9 @@
+import { useEffect, useState } from 'react'
 import CurrencyInput from 'react-currency-input'
 import { Controller, useForm } from 'react-hook-form'
 import Select from 'react-select'
+import { eres } from 'utils/eres'
+import { fetcher } from 'utils/fetcher'
 
 export const PlanForm = ({ plan = {}, disabled, setDisabled, onSubmit }) => {
   const {
@@ -8,7 +11,6 @@ export const PlanForm = ({ plan = {}, disabled, setDisabled, onSubmit }) => {
     handleSubmit,
     setValue,
     control,
-    watch,
     formState: { errors, isSubmitting },
   } = useForm({
     defaultValues: {
@@ -16,7 +18,38 @@ export const PlanForm = ({ plan = {}, disabled, setDisabled, onSubmit }) => {
     },
   })
 
-  const sectors = watch('sectors')
+  const [isStadiumSelected, setStadiumSelected] = useState(true)
+  const [stadiums, setStadiums] = useState([])
+  const [sectors, setSectors] = useState([])
+
+  useEffect(() => {
+    const fetch = async () => {
+      const [error, result] = await eres(fetcher({ path: '/stadiums' }))
+
+      setStadiums(result)
+    }
+
+    fetch()
+  }, [])
+
+  const selectStadiums = stadiums?.reduce((acc, item) => {
+    return [
+      ...acc,
+      {
+        value: item.id,
+        label: item.name,
+      },
+    ]
+  }, [])
+  const selectSectors = sectors?.reduce((acc, item) => {
+    return [
+      ...acc,
+      {
+        value: item.id,
+        label: item.name,
+      },
+    ]
+  }, [])
 
   return (
     <div className="px-4 md:px-10 mx-auto w-full bg-gray-100 py-6">
@@ -88,12 +121,88 @@ export const PlanForm = ({ plan = {}, disabled, setDisabled, onSubmit }) => {
                   <input
                     type="text"
                     className="border-0 px-3 py-3 placeholder-gray-300 text-gray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150 disabled:bg-transparent disabled:shadow-none disabled:pl-0 disabled:pl-0"
-                    placeholder="Aplicativo usado na web"
+                    placeholder="Descrição do plano"
                     {...register('description')}
                     disabled={disabled}
                   />
                   <p className="text-xs text-red-600 mt-1">
                     {errors.description?.message}
+                  </p>
+                </div>
+              </div>
+              <div className="w-full lg:w-6/12 px-4">
+                <div className="relative w-full mb-3">
+                  <label className="block text-gray-600 text-xs font-bold mb-2">
+                    <span className="uppercase">Estádios</span>
+                  </label>
+                  <Controller
+                    control={control}
+                    name="stadiumId"
+                    rules={{
+                      required: 'Estádio é um campo obrigatório.',
+                    }}
+                    render={({ field }) => (
+                      <Select
+                        {...field}
+                        className="basic-single"
+                        classNamePrefix="select"
+                        isDisabled={disabled}
+                        isLoading={false}
+                        isClearable
+                        isSearchable
+                        placeholder="Procurar..."
+                        onChange={(data) => {
+                          field.onChange(data.value)
+                          setStadiumSelected(false)
+
+                          const sectors = stadiums.filter(
+                            (stadium) => stadium.id === data.value
+                          )[0].sectors
+                          setSectors(sectors)
+                        }}
+                        value={selectStadiums?.find(
+                          (item) => item.value === field.value
+                        )}
+                        options={selectStadiums}
+                      />
+                    )}
+                  />
+                  <p className="text-xs text-red-600 mt-1">
+                    {errors.sectors?.message}
+                  </p>
+                </div>
+              </div>
+              <div className="w-full lg:w-6/12 px-4">
+                <div className="relative w-full mb-3">
+                  <label className="block text-gray-600 text-xs font-bold mb-2">
+                    <span className="uppercase">Setores</span>
+                  </label>
+                  <Controller
+                    control={control}
+                    name="sectors"
+                    rules={{
+                      required: 'Setores é um campo obrigatório.',
+                    }}
+                    render={({ field }) => (
+                      <Select
+                        {...field}
+                        className="basic-single"
+                        classNamePrefix="select"
+                        isDisabled={isStadiumSelected}
+                        isLoading={false}
+                        isClearable
+                        isSearchable
+                        isMulti
+                        placeholder="Procurar..."
+                        value={selectSectors?.find(
+                          (item) => item.value === field.value
+                        )}
+                        options={selectSectors}
+                      />
+                    )}
+                  />
+                  <p className="text-xs text-red-600 mt-1">
+                    {errors.sectors?.message}
                   </p>
                 </div>
               </div>
@@ -121,7 +230,7 @@ export const PlanForm = ({ plan = {}, disabled, setDisabled, onSubmit }) => {
                         ref={field.ref}
                         spellCheck="false"
                         style={{ outline: 'none' }}
-                        value={field.value}
+                        value={field.value / 1}
                         prefix="R$ "
                         decimalSeparator=","
                         thousandSeparator="."
@@ -130,46 +239,6 @@ export const PlanForm = ({ plan = {}, disabled, setDisabled, onSubmit }) => {
                   />
                   <p className="text-xs text-red-600 mt-1">
                     {errors.price?.message}
-                  </p>
-                </div>
-              </div>
-              <div className="w-full lg:w-6/12 px-4">
-                <div className="relative w-full mb-3">
-                  <label className="block text-gray-600 text-xs font-bold mb-2">
-                    <span className="uppercase">Setores</span>
-                  </label>
-                  <Controller
-                    control={control}
-                    name="sectors"
-                    rules={{
-                      required: 'Setores é um campo obrigatório.',
-                    }}
-                    render={({ field }) => (
-                      <Select
-                        {...field}
-                        className="basic-single"
-                        classNamePrefix="select"
-                        isDisabled={disabled}
-                        isLoading={false}
-                        isClearable
-                        isSearchable
-                        isMulti
-                        placeholder="Procurar..."
-                        value={
-                          field?.value?.map((item) => ({
-                            value: item?.id,
-                            label: item?.name,
-                          })) ?? ''
-                        }
-                        options={sectors?.map((item) => ({
-                          value: item?.id,
-                          label: item?.name,
-                        }))}
-                      />
-                    )}
-                  />
-                  <p className="text-xs text-red-600 mt-1">
-                    {errors.sectors?.message}
                   </p>
                 </div>
               </div>

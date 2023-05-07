@@ -22,7 +22,8 @@ function Plan({}) {
   const onSubmit = async (data) => {
     const body = removeEmptyFields(data)
 
-    body.sectors = body.sectors?.map((sector) => sector.id)
+    if (body.sectors) body.sectors = body.sectors?.map((sector) => sector.value)
+    body.price = Number(body.price)
 
     const [error, result] = await eres(
       fetcher({

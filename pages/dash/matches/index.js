@@ -144,6 +144,9 @@ const Matches = () => {
                       Time Fora
                     </th>
                     <th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-gray-50 text-gray-500 border-gray-100">
+                      Quantidade de Checkins
+                    </th>
+                    <th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-gray-50 text-gray-500 border-gray-100">
                       Horário
                     </th>
                     <th className="px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-gray-50 text-gray-500 border-gray-100">
@@ -194,10 +197,11 @@ const Matches = () => {
                         {matches.map(
                           ({
                             id,
-                            createdAt,
                             homeTeam,
                             awayTeam,
+                            checkins,
                             startTime,
+                            createdAt,
                           }) => (
                             <tr
                               key={id}
@@ -209,6 +213,9 @@ const Matches = () => {
                               </td>
                               <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
                                 {awayTeam}
+                              </td>
+                              <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
+                                {checkins.length}
                               </td>
                               <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
                                 {format(
