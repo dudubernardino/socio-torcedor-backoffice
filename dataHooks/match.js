@@ -1,12 +1,12 @@
 import useSWR from 'swr'
 
-export const usePayment = ({ paymentId }) => {
+export const useMatch = ({ matchId }) => {
   const { data, error, mutate } = useSWR({
-    path: `/payments/${paymentId}`,
+    path: `/matches/${matchId}`,
   })
 
   return {
-    payment: data,
+    match: data,
     isLoading: !error && !data,
     isError: error,
     mutate,

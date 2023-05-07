@@ -51,6 +51,8 @@ export const Sidebar = () => {
 
   const hasPlans = ['ADMIN', 'MANAGER'].includes(payload?.role)
 
+  const hasMatches = ['SUPER_ADMIN', 'ADMIN', 'MANAGER'].includes(payload?.role)
+
   const hasBilling = [
     'INIC_ADMIN',
     'ORG_ADMIN',
@@ -212,6 +214,29 @@ export const Sidebar = () => {
                       }
                     ></i>{' '}
                     Planos
+                  </Link>
+                </li>
+              )}
+              {hasMatches && (
+                <li className="items-center">
+                  <Link
+                    href="/dash/matches"
+                    className={
+                      'text-xs uppercase py-3 font-bold block ' +
+                      (router.pathname.indexOf('/dash/matches') !== -1
+                        ? 'text-blue-500 hover:text-blue-600'
+                        : 'text-gray-700 hover:text-gray-500')
+                    }
+                  >
+                    <i
+                      className={
+                        'fas fa-trophy mr-2 text-sm ' +
+                        (router.pathname.indexOf('/dash/matches') !== -1
+                          ? 'opacity-75'
+                          : 'text-gray-300')
+                      }
+                    ></i>{' '}
+                    Partidas
                   </Link>
                 </li>
               )}
